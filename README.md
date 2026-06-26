@@ -150,10 +150,7 @@ Smart-Study-Planner/
 ├── index.html
 ├── style.css
 ├── script.js
-├── assets/
-│   ├── images/
-│   ├── icons/
-│   └── screenshots/
+├── 
 │
 └── README.md
 ```
@@ -231,7 +228,7 @@ This project is licensed under the MIT License.
 
 ## Author
 
-**Maaz Khan**
+**Muhammad Dilawar**
 
 Frontend Developer
 
