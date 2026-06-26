@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Study Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+<div class="ambient" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+  <span class="grain"></span>
+</div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12 L12 5 L21 12 L12 19 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg>
+      </span>
+      <div class="brand-text">
+        <strong>StudyHub</strong>
+        <small>Study Planner</small>
+      </div>
+      <button class="icon-btn sidebar-close" id="sidebarClose" aria-label="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="nav" id="mainNav">
+      <a href="#dashboard" class="nav-link active" data-section="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>Overview</span>
+      </a>
+      <a href="#tasks" class="nav-link" data-section="tasks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+        <span>Tasks</span>
+        <em class="nav-badge" id="navTaskCount">0</em>
+      </a>
+      <a href="#pomodoro" class="nav-link" data-section="pomodoro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5M12 2.5v2"/></svg>
+        <span>Focus Timer</span>
+      </a>
+      <a href="#calendar" class="nav-link" data-section="calendar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+        <span>Calendar</span>
+      </a>
+      <a href="#subjects" class="nav-link" data-section="subjects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4.5C4 3.7 4.7 3 5.5 3H17a2 2 0 0 1 2 2v15a1 1 0 0 1-1.4.9L12 18.5l-5.6 2.4A1 1 0 0 1 5 20V5"/></svg>
+        <span>Subjects</span>
+      </a>
+      <a href="#notes" class="nav-link" data-section="notes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
+        <span>Notes</span>
+      </a>
+      <a href="#goals" class="nav-link" data-section="goals">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>
+        <span>Goals</span>
+      </a>
+      <a href="#habits" class="nav-link" data-section="habits">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 2.5c2.5 2 3.5 5 2 8-1 2-3 2.7-3 4.7a3 3 0 1 1-6 0c0-1 .4-1.7 1-2.3"/><path d="M9 13c-1.2 1-2 2.5-2 4.2a5 5 0 0 0 10 0"/></svg>
+        <span>Habits</span>
+      </a>
+      <a href="#analytics" class="nav-link" data-section="analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M11 20V4M18 20v-7"/><path d="M2 20h20"/></svg>
+        <span>Analytics</span>
+      </a>
+      <a href="#gpa" class="nav-link" data-section="gpa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 19 19 5M7.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM16.5 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg>
+        <span>GPA Calculator</span>
+      </a>
+      <a href="#settings" class="nav-link" data-section="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10c.1.7.6 1.3 1.5 1.5H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="streak-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c1 4-4 5-4 9a4 4 0 0 0 8 0c0-1.5-1-2-1-3.5 1.5 1 3 3 3 5.5a6 6 0 1 1-12 0c0-5 4-6 6-11Z"/></svg>
+        <span id="streakCount">0</span> day streak
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="main">
+    <header class="navbar">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+
+      <div class="navbar-title">
+        <h1 id="pageTitle">Overview</h1>
+        <p id="pageSubtitle">Thursday, your focus space for the day</p>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="globalSearch" placeholder="Search tasks, notes, subjects…">
+        </div>
+        <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.3M12 19.2v2.3M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 7 7 0 0 0 20 14.5Z"/></svg>
+        </button>
+        <button class="icon-btn" id="addTaskQuick" aria-label="Quick add task">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <div class="avatar" id="userAvatar">S</div>
+      </div>
+    </header>
+
+    <main class="content" id="content">
+
+      <section class="page active" id="dashboard" data-page="dashboard">
+
+        <div class="hero glass">
+          <div class="hero-text">
+            <p class="eyebrow">Today's focus</p>
+            <h2 id="heroGreeting">Let's make today count.</h2>
+            <p class="hero-sub" id="heroSummary">You have no tasks yet — add your first one to get rolling.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="heroAddTask">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                Add a task
+              </button>
+              <button class="btn btn-ghost" id="heroStartFocus">Start a focus session</button>
+            </div>
+          </div>
+          <div class="hero-ring" id="heroRing">
+            <svg viewBox="0 0 140 140" class="ring-svg">
+              <circle cx="70" cy="70" r="58" class="ring-track"/>
+              <circle cx="70" cy="70" r="58" class="ring-progress" id="heroRingProgress"/>
+            </svg>
+            <div class="ring-center">
+              <strong id="heroRingValue">0%</strong>
+              <span>complete</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card glass">
+            <div class="stat-icon stat-icon-mint">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2.5 2.5L16 9"/><circle cx="12" cy="12" r="9"/></svg>
+            </div>
+            <div>
+              <strong id="statTasksDone">0/0</strong>
+              <span>Tasks completed today</span>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <div class="stat-icon stat-icon-coral">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/></svg>
+            </div>
+            <div>
+              <strong id="statFocusTime">0m</strong>
+              <span>Focused today</span>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <div class="stat-icon stat-icon-violet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2.5c2.5 2 3.5 5 2 8-1 2-3 2.7-3 4.7a3 3 0 1 1-6 0c0-1 .4-1.7 1-2.3"/></svg>
+            </div>
+            <div>
+              <strong id="statStreak">0 days</strong>
+              <span>Current streak</span>
+            </div>
+          </div>
+          <div class="stat-card glass">
+            <div class="stat-icon stat-icon-gold">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg>
+            </div>
+            <div>
+              <strong id="statGoals">0%</strong>
+              <span>Goal progress</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="panel glass span-2">
+            <div class="panel-head">
+              <h3>Today &amp; upcoming</h3>
+              <a href="#tasks" class="link-nav" data-section="tasks">View all tasks</a>
+            </div>
+            <ul class="mini-list" id="dashTaskList">
+              <li class="empty-row">No tasks yet. Add one to see it here.</li>
+            </ul>
+          </div>
+
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Habits today</h3>
+              <a href="#habits" class="link-nav" data-section="habits">Manage</a>
+            </div>
+            <ul class="mini-list" id="dashHabitList">
+              <li class="empty-row">No habits yet.</li>
+            </ul>
+          </div>
+
+          <div class="panel glass">
+            <div class="panel-head">
+              <h3>Subjects</h3>
+              <a href="#subjects" class="link-nav" data-section="subjects">Manage</a>
+            </div>
+            <ul class="chip-list" id="dashSubjectList">
+              <li class="empty-row">No subjects yet.</li>
+            </ul>
+          </div>
+
+          <div class="panel glass span-2">
+            <div class="panel-head">
+              <h3>Weekly focus</h3>
+              <span class="muted-tag">Last 7 days</span>
+            </div>
+            <div class="chart-wrap small">
+              <canvas id="dashWeeklyChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="tasks" data-page="tasks">
+        <div class="toolbar glass">
+          <div class="toolbar-filters">
+            <select id="taskFilterStatus" class="select">
+              <option value="all">All status</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+            <select id="taskFilterSubject" class="select">
+              <option value="all">All subjects</option>
+            </select>
+            <select id="taskFilterPriority" class="select">
+              <option value="all">All priorities</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <select id="taskSort" class="select">
+              <option value="due">Sort: Due date</option>
+              <option value="priority">Sort: Priority</option>
+              <option value="created">Sort: Recently added</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="openTaskModal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New task
+          </button>
+        </div>
+
+        <div class="task-board" id="taskBoard">
+          <ul class="task-list" id="taskList"></ul>
+          <div class="empty-state" id="taskEmptyState">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+            <h3>No tasks here</h3>
+            <p>Create a task to start planning your study session.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="pomodoro" data-page="pomodoro">
+        <div class="pomodoro-layout">
+          <div class="panel glass timer-panel">
+            <div class="timer-modes" id="timerModes">
+              <button class="mode-btn active" data-mode="focus">Focus</button>
+              <button class="mode-btn" data-mode="short">Short break</button>
+              <button class="mode-btn" data-mode="long">Long break</button>
+            </div>
+
+            <div class="timer-ring-wrap">
+              <svg viewBox="0 0 280 280" class="timer-svg">
+                <circle cx="140" cy="140" r="120" class="timer-track"/>
+                <circle cx="140" cy="140" r="120" class="timer-progress" id="timerProgress"/>
+              </svg>
+              <div class="timer-center">
+                <span id="timerDisplay">25:00</span>
+                <small id="timerSessionLabel">Focus session</small>
+              </div>
+            </div>
+
+            <div class="timer-controls">
+              <button class="icon-btn" id="timerReset" aria-label="Reset">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+              </button>
+              <button class="btn btn-primary btn-lg" id="timerStartPause">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="iconPlay"><path d="M7 5l12 7-12 7V5Z" fill="currentColor"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="iconPause" style="display:none"><rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/></svg>
+                <span id="timerBtnLabel">Start</span>
+              </button>
+              <button class="icon-btn" id="timerSkip" aria-label="Skip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4l12 8-12 8V4ZM19 4v16"/></svg>
+              </button>
+            </div>
+
+            <div class="timer-meta">
+              <label>Linked subject
+                <select id="timerSubjectSelect" class="select"><option value="">No subject</option></select>
+              </label>
+              <div class="timer-durations">
+                <label>Focus <input type="number" id="durFocus" min="1" max="180" value="25"> min</label>
+                <label>Short <input type="number" id="durShort" min="1" max="60" value="5"> min</label>
+                <label>Long <input type="number" id="durLong" min="1" max="90" value="15"> min</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel glass session-panel">
+            <div class="panel-head">
+              <h3>Session history</h3>
+              <span class="muted-tag" id="sessionTodayCount">0 today</span>
+            </div>
+            <ul class="mini-list" id="sessionHistoryList">
+              <li class="empty-row">No sessions yet today.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="calendar" data-page="calendar">
+        <div class="panel glass">
+          <div class="calendar-head">
+            <button class="icon-btn" id="calPrev">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <h3 id="calMonthLabel">Month Year</h3>
+            <button class="icon-btn" id="calNext">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-sm" id="calToday">Today</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <div class="panel glass" id="calendarDayPanel">
+          <div class="panel-head">
+            <h3 id="calDaySelectedLabel">Select a day</h3>
+          </div>
+          <ul class="mini-list" id="calDayTasks">
+            <li class="empty-row">Nothing scheduled.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="page" id="subjects" data-page="subjects">
+        <div class="toolbar glass">
+          <p class="muted-tag">Organize coursework, link tasks and notes, and feed your GPA calculator.</p>
+          <button class="btn btn-primary" id="openSubjectModal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New subject
+          </button>
+        </div>
+        <div class="card-grid" id="subjectGrid">
+          <div class="empty-state full-row" id="subjectEmptyState">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4.5C4 3.7 4.7 3 5.5 3H17a2 2 0 0 1 2 2v15a1 1 0 0 1-1.4.9L12 18.5l-5.6 2.4A1 1 0 0 1 5 20V5"/></svg>
+            <h3>No subjects yet</h3>
+            <p>Add a subject to start tagging tasks, notes and grades.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="notes" data-page="notes">
+        <div class="toolbar glass">
+          <div class="toolbar-filters">
+            <select id="noteFilterSubject" class="select"><option value="all">All subjects</option></select>
+          </div>
+          <button class="btn btn-primary" id="openNoteModal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New note
+          </button>
+        </div>
+        <div class="card-grid notes-grid" id="noteGrid">
+          <div class="empty-state full-row" id="noteEmptyState">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
+            <h3>No notes yet</h3>
+            <p>Capture lecture notes, summaries and reminders here.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="goals" data-page="goals">
+        <div class="toolbar glass">
+          <p class="muted-tag">Set targets for the term and track progress as you go.</p>
+          <button class="btn btn-primary" id="openGoalModal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New goal
+          </button>
+        </div>
+        <div class="card-grid" id="goalGrid">
+          <div class="empty-state full-row" id="goalEmptyState">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg>
+            <h3>No goals yet</h3>
+            <p>Define a goal — like "Finish 10 chapters" — and track it here.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="habits" data-page="habits">
+        <div class="toolbar glass">
+          <p class="muted-tag">Small daily actions, tracked consistently. Tap to check off today.</p>
+          <button class="btn btn-primary" id="openHabitModal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New habit
+          </button>
+        </div>
+        <div class="habit-list-wrap" id="habitListWrap">
+          <div class="empty-state" id="habitEmptyState">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 2.5c2.5 2 3.5 5 2 8-1 2-3 2.7-3 4.7a3 3 0 1 1-6 0c0-1 .4-1.7 1-2.3"/></svg>
+            <h3>No habits yet</h3>
+            <p>Add a daily habit like "Review flashcards" to build a streak.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="analytics" data-page="analytics">
+        <div class="dash-grid">
+          <div class="panel glass span-2">
+            <div class="panel-head"><h3>Focus minutes — last 14 days</h3></div>
+            <div class="chart-wrap"><canvas id="chartFocusTrend"></canvas></div>
+          </div>
+          <div class="panel glass">
+            <div class="panel-head"><h3>Time by subject</h3></div>
+            <div class="chart-wrap"><canvas id="chartSubjectTime"></canvas></div>
+          </div>
+          <div class="panel glass">
+            <div class="panel-head"><h3>Task completion</h3></div>
+            <div class="chart-wrap"><canvas id="chartTaskStatus"></canvas></div>
+          </div>
+          <div class="panel glass span-2">
+            <div class="panel-head"><h3>Habit consistency — last 14 days</h3></div>
+            <div class="chart-wrap"><canvas id="chartHabitConsistency"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="gpa" data-page="gpa">
+        <div class="gpa-layout">
+          <div class="panel glass span-2">
+            <div class="panel-head">
+              <h3>Courses</h3>
+              <button class="btn btn-ghost btn-sm" id="gpaAddRow">+ Add course</button>
+            </div>
+            <div class="gpa-table-wrap">
+              <table class="gpa-table" id="gpaTable">
+                <thead>
+                  <tr><th>Course</th><th>Credit hours</th><th>Grade</th><th></th></tr>
+                </thead>
+                <tbody id="gpaTableBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">Grade points use a standard 4.0 scale (A=4.0, A-=3.7, B+=3.3 … F=0.0).</p>
+          </div>
+          <div class="panel glass gpa-result">
+            <p class="eyebrow">Your GPA</p>
+            <strong id="gpaResultValue">0.00</strong>
+            <span id="gpaResultCredits">0 total credit hours</span>
+            <div class="gpa-scale-note">Scale: 4.0</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="settings" data-page="settings">
+        <div class="settings-grid">
+          <div class="panel glass">
+            <div class="panel-head"><h3>Profile</h3></div>
+            <label class="field">Display name
+              <input type="text" id="settingName" placeholder="Your name">
+            </label>
+          </div>
+
+          <div class="panel glass">
+            <div class="panel-head"><h3>Appearance</h3></div>
+            <div class="settings-row">
+              <div>
+                <strong>Theme</strong>
+                <p class="muted">Switch between light and dark glass.</p>
+              </div>
+              <button class="btn btn-ghost" id="settingsThemeToggle">Toggle theme</button>
+            </div>
+          </div>
+
+          <div class="panel glass">
+            <div class="panel-head"><h3>Data</h3></div>
+            <div class="settings-row">
+              <div>
+                <strong>Export data</strong>
+                <p class="muted">Download everything as a JSON file.</p>
+              </div>
+              <button class="btn btn-ghost" id="exportData">Export</button>
+            </div>
+            <div class="settings-row">
+              <div>
+                <strong>Import data</strong>
+                <p class="muted">Restore from a previously exported file.</p>
+              </div>
+              <label class="btn btn-ghost file-btn">
+                Import
+                <input type="file" id="importData" accept="application/json" hidden>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div>
+                <strong>Reset everything</strong>
+                <p class="muted">Clears all tasks, notes, goals and habits stored locally.</p>
+              </div>
+              <button class="btn btn-danger" id="resetData">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+
+  <form class="modal glass" id="taskModal">
+    <div class="modal-head">
+      <h3 id="taskModalTitle">New task</h3>
+      <button type="button" class="icon-btn modal-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="taskId">
+    <label class="field">Title<input type="text" id="taskTitle" required placeholder="e.g. Read chapter 4"></label>
+    <label class="field">Description<textarea id="taskDesc" rows="2" placeholder="Optional details"></textarea></label>
+    <div class="field-row">
+      <label class="field">Subject<select id="taskSubject"><option value="">None</option></select></label>
+      <label class="field">Priority
+        <select id="taskPriority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+      </label>
+    </div>
+    <div class="field-row">
+      <label class="field">Due date<input type="date" id="taskDue"></label>
+      <label class="field">Due time<input type="time" id="taskTime"></label>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save task</button>
+    </div>
+  </form>
+
+  <form class="modal glass" id="subjectModal">
+    <div class="modal-head">
+      <h3 id="subjectModalTitle">New subject</h3>
+      <button type="button" class="icon-btn modal-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="subjectId">
+    <label class="field">Name<input type="text" id="subjectName" required placeholder="e.g. Organic Chemistry"></label>
+    <label class="field">Instructor<input type="text" id="subjectInstructor" placeholder="Optional"></label>
+    <label class="field">Credit hours<input type="number" id="subjectCredits" min="0" max="20" step="0.5" value="3"></label>
+    <label class="field">Color
+      <div class="color-row" id="subjectColorRow"></div>
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save subject</button>
+    </div>
+  </form>
+
+  <form class="modal glass" id="noteModal">
+    <div class="modal-head">
+      <h3 id="noteModalTitle">New note</h3>
+      <button type="button" class="icon-btn modal-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="noteId">
+    <label class="field">Title<input type="text" id="noteTitle" required placeholder="e.g. Lecture 3 summary"></label>
+    <label class="field">Subject<select id="noteSubject"><option value="">None</option></select></label>
+    <label class="field">Content<textarea id="noteContent" rows="6" placeholder="Write your note…"></textarea></label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save note</button>
+    </div>
+  </form>
+
+  <form class="modal glass" id="goalModal">
+    <div class="modal-head">
+      <h3 id="goalModalTitle">New goal</h3>
+      <button type="button" class="icon-btn modal-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="goalId">
+    <label class="field">Title<input type="text" id="goalTitle" required placeholder="e.g. Finish 10 practice tests"></label>
+    <label class="field">Subject<select id="goalSubject"><option value="">None</option></select></label>
+    <div class="field-row">
+      <label class="field">Target<input type="number" id="goalTarget" min="1" value="10"></label>
+      <label class="field">Current<input type="number" id="goalCurrent" min="0" value="0"></label>
+    </div>
+    <label class="field">Target date<input type="date" id="goalDue"></label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save goal</button>
+    </div>
+  </form>
+
+  <form class="modal glass" id="habitModal">
+    <div class="modal-head">
+      <h3 id="habitModalTitle">New habit</h3>
+      <button type="button" class="icon-btn modal-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="habitId">
+    <label class="field">Habit name<input type="text" id="habitName" required placeholder="e.g. Review flashcards"></label>
+    <label class="field">Frequency
+      <select id="habitFrequency"><option value="daily">Every day</option><option value="weekday">Weekdays only</option></select>
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save habit</button>
+    </div>
+  </form>
+
+  <div class="modal glass" id="confirmModal">
+    <div class="modal-head"><h3>Are you sure?</h3></div>
+    <p class="muted" id="confirmMessage">This action can't be undone.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirmActionBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
